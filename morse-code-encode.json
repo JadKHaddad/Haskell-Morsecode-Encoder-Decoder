@@ -1,0 +1,230 @@
+[
+    {
+        "input": "0",
+        "output": "-----"
+    },
+    {
+        "input": "1",
+        "output": ".----"
+    },
+    {
+        "input": "2",
+        "output": "..---"
+    },
+    {
+        "input": "3",
+        "output": "...--"
+    },
+    {
+        "input": "4",
+        "output": "....-"
+    },
+    {
+        "input": "5",
+        "output": "....."
+    },
+    {
+        "input": "6",
+        "output": "-...."
+    },
+    {
+        "input": "7",
+        "output": "--..."
+    },
+    {
+        "input": "8",
+        "output": "---.."
+    },
+    {
+        "input": "9",
+        "output": "----."
+    },
+    {
+        "input": "a",
+        "output": ".-"
+    },
+    {
+        "input": "b",
+        "output": "-..."
+    },
+    {
+        "input": "c",
+        "output": "-.-."
+    },
+    {
+        "input": "d",
+        "output": "-.."
+    },
+    {
+        "input": "e",
+        "output": "."
+    },
+    {
+        "input": "f",
+        "output": "..-."
+    },
+    {
+        "input": "g",
+        "output": "--."
+    },
+    {
+        "input": "h",
+        "output": "...."
+    },
+    {
+        "input": "i",
+        "output": ".."
+    },
+    {
+        "input": "j",
+        "output": ".---"
+    },
+    {
+        "input": "k",
+        "output": "-.-"
+    },
+    {
+        "input": "l",
+        "output": ".-.."
+    },
+    {
+        "input": "m",
+        "output": "--"
+    },
+    {
+        "input": "n",
+        "output": "-."
+    },
+    {
+        "input": "o",
+        "output": "---"
+    },
+    {
+        "input": "p",
+        "output": ".--."
+    },
+    {
+        "input": "q",
+        "output": "--.-"
+    },
+    {
+        "input": "r",
+        "output": ".-."
+    },
+    {
+        "input": "s",
+        "output": "..."
+    },
+    {
+        "input": "t",
+        "output": "-"
+    },
+    {
+        "input": "u",
+        "output": "..-"
+    },
+    {
+        "input": "v",
+        "output": "...-"
+    },
+    {
+        "input": "w",
+        "output": ".--"
+    },
+    {
+        "input": "x",
+        "output": "-..-"
+    },
+    {
+        "input": "y",
+        "output": "-.--"
+    },
+    {
+        "input": "z",
+        "output": "--.."
+    },
+    {
+        "input": ".",
+        "output": ".-.-.-"
+    },
+    {
+        "input": ",",
+        "output": "--..--"
+    },
+    {
+        "input": "?",
+        "output": "..--.."
+    },
+    {
+        "input": "'",
+        "output": ".----."
+    },
+    {
+        "input": "!",
+        "output": "-.-.--"
+    },
+    {
+        "input": "/",
+        "output": "-..-."
+    },
+    {
+        "input": "(",
+        "output": "-.--."
+    },
+    {
+        "input": ")",
+        "output": "-.--.-"
+    },
+    {
+        "input": "&",
+        "output": ".-..."
+    },
+    {
+        "input": ":",
+        "output": "---..."
+    },
+    {
+        "input": ";",
+        "output": "-.-.-."
+    },
+    {
+        "input": "=",
+        "output": "-...-"
+    },
+    {
+        "input": "+",
+        "output": ".-.-."
+    },
+    {
+        "input": "-",
+        "output": "-....-"
+    },
+    {
+        "input": "_",
+        "output": "..--.-"
+    },
+    {
+        "input": "\"",
+        "output": ".-..-."
+    },
+    {
+        "input": "$",
+        "output": "...-..-"
+    },
+    {
+        "input": "@",
+        "output": ".--.-."
+    },
+    {
+        "input": "¿",
+        "output": "..-.-"
+    },
+    {
+        "input": "¡",
+        "output": "--...-"
+    },
+    {
+        "input": " ",
+        "output": "/"
+    }
+]
