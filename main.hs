@@ -4,6 +4,7 @@
 import Control.Monad (when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
+import Data.List
 import Data.List.Split
 import Data.Text (Text)
 import GHC.Generics
@@ -19,6 +20,9 @@ data Symbol = Symbol
 instance FromJSON Symbol
 
 instance ToJSON Symbol
+
+splitOnAnyOf :: Eq a => [[a]] -> [a] -> [[a]]
+splitOnAnyOf ds xs = foldl' (\ys d -> ys >>= splitOn d) [xs] ds
 
 jsonFileEncode :: FilePath
 jsonFileEncode = "morse-code-encode.json"
@@ -47,14 +51,24 @@ mapOutputEncode (x : xs) symbols =
       Left notValidSymbol -> Left notValidSymbol
       Right result -> Right (symbol ++ " " ++ result)
 
-mapOutputDecode :: [String] -> [Char] -> [Symbol] -> Either String String
-mapOutputDecode [] c _ = Right (c ++ " ")
-mapOutputDecode (x : xs) c symbols
-  | x == "" = mapOutputDecode xs c symbols
-  | elem '/' x = mapOutputDecode xs (c ++ " ") symbols
+mapOutputDecode :: [String] -> [Symbol] -> Either String String
+mapOutputDecode [] _ = Right []
+mapOutputDecode (x : xs) symbols
+  | x == "" = mapOutputDecode xs symbols
+  | elem '/' x = case mapOutputDecode xs symbols of
+    Left notValidSymbol -> Left notValidSymbol
+    Right result -> Right (" " ++ result)
   | otherwise = case findOutput x symbols of
     Left notValidSymbol -> Left notValidSymbol
-    Right y -> mapOutputDecode xs (c ++ " " ++ y) symbols
+    Right symbol -> case mapOutputDecode xs symbols of
+      Left notValidSymbol -> Left notValidSymbol
+      Right result -> Right (symbol ++ result)
+
+addSpaces :: [Char] -> [Char]
+addSpaces [] = []
+addSpaces (x : xs)
+  | x == '/' = " / " ++ addSpaces xs
+  | otherwise = x : addSpaces xs
 
 whiteSpaces :: [Char]
 whiteSpaces = [' ', '\n', '\t']
@@ -81,10 +95,14 @@ main = do
 
   when (args `isPresent` (command "encode")) $ do
     string <- args `getArgOrExit` (argument "string")
+    let input =
+          if args `isPresent` (longOption "raw")
+            then string
+            else trim string
     d <- (eitherDecode <$> getJSONEncode) :: IO (Either String [Symbol])
     case d of
       Left err -> putStrLn $ err
-      Right ps -> case mapOutputEncode (trim string) ps of
+      Right ps -> case mapOutputEncode input ps of
         Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
         Right output -> putStrLn $ output
 
@@ -93,9 +111,12 @@ main = do
     d <- (eitherDecode <$> getJSONDecode) :: IO (Either String [Symbol])
     case d of
       Left err -> putStrLn $ err
-      Right ps -> case mapOutputDecode (splitOn " " string) "" ps of
+      Right ps -> case mapOutputDecode (splitOn " " (addSpaces string)) ps of
         Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
-        Right output -> putStrLn $ trim output ++ " "
+        Right output ->
+          if args `isPresent` (longOption "raw")
+            then putStrLn $ output
+            else putStrLn $ trim output
 
   when (args `isPresent` (command "version")) $ do
     putStrLn $ version
