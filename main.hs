@@ -21,6 +21,9 @@ instance FromJSON Symbol
 
 instance ToJSON Symbol
 
+splitOnAnyOf :: Eq a => [[a]] -> [a] -> [[a]]
+splitOnAnyOf ds xs = foldl' (\ys d -> ys >>= splitOn d) [xs] ds
+
 jsonFileEncode :: FilePath
 jsonFileEncode = "morse-code-encode.json"
 
@@ -108,7 +111,7 @@ main = do
     d <- (eitherDecode <$> getJSONDecode) :: IO (Either String [Symbol])
     case d of
       Left err -> putStrLn $ err
-      Right ps -> case mapOutputDecode (splitOn " " (addSpaces string)) ps of
+      Right ps -> case mapOutputDecode (splitOnAnyOf [" ", "\t", "\n"] (addSpaces string)) ps of
         Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
         Right output ->
           if args `isPresent` (longOption "raw")
