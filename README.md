@@ -33,7 +33,3 @@ Run
 ```sh
 docker run --rm -it haskell-morse:1.0 [OPTIONS]
 ```
-
-## TODO
-
-Fix decoder: add remove spaces add /
