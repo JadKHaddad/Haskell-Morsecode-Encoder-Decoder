@@ -66,14 +66,6 @@ trim [x]
   | elem x whiteSpaces = []
   | otherwise = [x]
 
-prepareTrimmedForDecode :: [Char] -> [Char]
-prepareTrimmedForDecode [] = []
-prepareTrimmedForDecode (x : y : xs)
-  | x == '/' && y == '/' = prepareTrimmedForDecode (y : xs)
-  | x /= ' ' && y == '/' || x == '/' && y /= ' ' = x : prepareTrimmedForDecode (" " ++ [y] ++ xs)
-  | otherwise = x : prepareTrimmedForDecode (y : xs)
-prepareTrimmedForDecode [x] = [x]
-
 version :: String
 version = "Morse Code Encoder/Decoder 1.0"
 
