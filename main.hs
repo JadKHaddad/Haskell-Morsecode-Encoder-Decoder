@@ -21,9 +21,6 @@ instance FromJSON Symbol
 
 instance ToJSON Symbol
 
-splitOnAnyOf :: Eq a => [[a]] -> [a] -> [[a]]
-splitOnAnyOf ds xs = foldl' (\ys d -> ys >>= splitOn d) [xs] ds
-
 jsonFileEncode :: FilePath
 jsonFileEncode = "morse-code-encode.json"
 
