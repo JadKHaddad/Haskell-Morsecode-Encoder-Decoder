@@ -8,7 +8,7 @@ cabal install aeson --lib
 
 ghc ./main.hs -o morsecode_encoder_decoder
 
-./morsecode_encoder_decoder
+./morsecode_encoder_decoder [OPTIONS]
 ```
 
 ```sh
