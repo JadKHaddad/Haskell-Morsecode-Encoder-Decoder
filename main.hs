@@ -38,12 +38,14 @@ findOutput n (x : xs)
   | n == input x = Right (output x)
   | otherwise = findOutput n xs
 
-mapOutputEncode :: [Char] -> [Char] -> [Symbol] -> Either String String
-mapOutputEncode [] c _ = Right (c ++ " ")
-mapOutputEncode (x : xs) c symbols =
+mapOutputEncode :: [Char] -> [Symbol] -> Either String String
+mapOutputEncode [] _ = Right []
+mapOutputEncode (x : xs) symbols =
   case findOutput [x] symbols of
     Left notValidSymbol -> Left notValidSymbol
-    Right y -> mapOutputEncode xs (c ++ " " ++ y) symbols
+    Right symbol -> case mapOutputEncode xs symbols of
+      Left notValidSymbol -> Left notValidSymbol
+      Right result -> Right (symbol ++ " " ++ result)
 
 mapOutputDecode :: [String] -> [Char] -> [Symbol] -> Either String String
 mapOutputDecode [] c _ = Right (c ++ " ")
@@ -82,7 +84,7 @@ main = do
     d <- (eitherDecode <$> getJSONEncode) :: IO (Either String [Symbol])
     case d of
       Left err -> putStrLn $ err
-      Right ps -> case mapOutputEncode (trim string) "" ps of
+      Right ps -> case mapOutputEncode (trim string) ps of
         Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
         Right output -> putStrLn $ output
 
