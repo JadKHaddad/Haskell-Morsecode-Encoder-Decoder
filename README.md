@@ -17,6 +17,7 @@ Morse Code Encoder/Decoder 1.0
 Usage:
   morsecode_encoder_decoder encode [--raw] <string>
   morsecode_encoder_decoder decode [--raw] <string>
+  morsecode_encoder_decoder interactive [--raw]
   morsecode_encoder_decoder version
 
 Options:
@@ -33,3 +34,6 @@ Run
 ```sh
 docker run --rm -it haskell-morse:1.0 [OPTIONS]
 ```
+
+## TODO
+fix trim: remove first space

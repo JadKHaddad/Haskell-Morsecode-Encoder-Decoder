@@ -86,11 +86,11 @@ trim [x]
   | otherwise = [x]
 
 check :: [String] -> Bool -- True = Decode, False = Encode
-check [] = False
+check [] = True -- Decode
 check (x : xs)
-  | not (x =~ re) && not (x =~ re2) = False
+  | not (x =~ re) && not (x =~ re2) = False -- Encode
   | otherwise = check xs
-  where
+  where 
     re = "^[.-]+$"
     re2 = "^[/]+$"
 
@@ -99,20 +99,20 @@ decide string = check (splitOn " " (trim string))
 
 interactive :: Bool -> [Symbol] -> [Symbol] -> IO ()
 interactive raw symbolsEncode symbolsDecode = do
+  putStrLn $ "Input:"
   line <- getLine
   unless (line == "exit") $ do
     if decide line --decode
       then case mapOutputDecode (splitOnAnyOf [" ", "\t", "\n"] (addSpaces line)) symbolsDecode of
         Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
-        Right output ->
-          if raw
-            then putStrLn $ "Decode: " ++  output
-            else putStrLn $ "Decode: " ++  (trim output)
+        Right output -> do
+          let outputString = if raw then output else trim output
+          putStrLn $ "\nDecode: " ++  outputString
       else do
         let input = if raw then line else trim line
         case mapOutputEncode input symbolsEncode of
           Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
-          Right output -> putStrLn $ "Encode: " ++ output
+          Right output -> putStrLn $ "\nEncode: " ++ output
     interactive raw symbolsEncode symbolsDecode
 
 version :: String
