@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE QuasiQuotes #-}
 
+import Control.Monad
 import Control.Monad (when)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
@@ -10,6 +11,8 @@ import Data.Text (Text)
 import GHC.Generics
 import System.Console.Docopt
 import System.Environment (getArgs)
+import Text.Regex.TDFA
+import Text.Regex.TDFA.Text ()
 
 data Symbol = Symbol
   { input :: String,
@@ -82,6 +85,36 @@ trim [x]
   | elem x whiteSpaces = []
   | otherwise = [x]
 
+check :: [String] -> Bool -- True = Decode, False = Encode
+check [] = False
+check (x : xs)
+  | not (x =~ re) && not (x =~ re2) = False
+  | otherwise = check xs
+  where
+    re = "^[.-]+$"
+    re2 = "^[/]+$"
+
+decide :: String -> Bool -- True = Decode, False = Encode
+decide string = check (splitOn " " (trim string))
+
+interactive :: Bool -> [Symbol] -> [Symbol] -> IO ()
+interactive raw symbolsEncode symbolsDecode = do
+  line <- getLine
+  unless (line == "exit") $ do
+    if decide line --decode
+      then case mapOutputDecode (splitOnAnyOf [" ", "\t", "\n"] (addSpaces line)) symbolsDecode of
+        Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
+        Right output ->
+          if raw
+            then putStrLn $ "Decode: " ++  output
+            else putStrLn $ "Decode: " ++  (trim output)
+      else do
+        let input = if raw then line else trim line
+        case mapOutputEncode input symbolsEncode of
+          Left notValidSymbol -> putStr $ "The fuck is this: " ++ notValidSymbol ++ "?\n"
+          Right output -> putStrLn $ "Encode: " ++ output
+    interactive raw symbolsEncode symbolsDecode
+
 version :: String
 version = "Morse Code Encoder/Decoder 1.0"
 
@@ -90,6 +123,7 @@ patterns = [docoptFile|USAGE.txt|]
 
 getArgOrExit = getArgOrExitWith patterns
 
+main :: IO ()
 main = do
   args <- parseArgsOrExit patterns =<< getArgs
 
@@ -117,6 +151,21 @@ main = do
           if args `isPresent` (longOption "raw")
             then putStrLn $ output
             else putStrLn $ trim output
+
+  when (args `isPresent` (command "interactive")) $ do
+    putStrLn $ "We are going interactive! Type exit to exit"
+    let raw =
+          if args `isPresent` (longOption "raw")
+            then True
+            else False
+    d <- (eitherDecode <$> getJSONEncode) :: IO (Either String [Symbol])
+    case d of
+      Left err -> putStrLn $ err
+      Right symbolsEncode -> do
+        d <- (eitherDecode <$> getJSONDecode) :: IO (Either String [Symbol])
+        case d of
+          Left err -> putStrLn $ err
+          Right symbolsDecode -> interactive raw symbolsEncode symbolsDecode
 
   when (args `isPresent` (command "version")) $ do
     putStrLn $ version
